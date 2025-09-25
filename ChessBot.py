@@ -1,6 +1,18 @@
 import chess
 import random
-import player
+
+class player:
+    def __init__(self, color: bool, board: chess.Board):
+     self.board = board
+     self.color = color
+    
+    def make_move(self, board: chess.Board, move: chess.Move):
+        piece =board.piece_at(move.from_square)
+        if piece.color == self.color:
+           board.push(move)
+           return move
+        else:
+            raise Exception("It's not your turn!")  
 
 
 def pick_move(board: chess.Board):
@@ -48,6 +60,7 @@ print(board)
 if computer_player.color: #if computer is playing as white, make the first move
     move = pick_move(board)
     board.push(move)
+    print(move)
     print(board)
     print(board.fen())
 #gameplay loop:
@@ -56,11 +69,13 @@ while (not board.is_game_over()): #while not in checkmate/stalemate/etc
         move = input("White:")
     else:
         move = input("Black:")
+    move = chess.Move.from_uci(move)
     human_player.make_move(board, move)
     print(board)
     print(board.fen())
     move = pick_move(board)
     board.push(move)
+    print(move)
     print(board)
     print(board.fen())
 
@@ -72,6 +87,7 @@ while (not board.is_game_over()): #while not in checkmate/stalemate/etc
         
 
     
+
 
 
 
