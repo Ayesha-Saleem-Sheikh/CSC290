@@ -7,7 +7,7 @@ class player:
      self.color = color
     
     def make_move(self, board: chess.Board, move: chess.Move):
-        piece =board.piece_at(move.from_square)
+        piece = board.piece_at(move.from_square)
         if piece.color == self.color:
            board.push(move)
            return move
@@ -29,7 +29,7 @@ def pick_move(board: chess.Board):
             #because funny. everybody loves en passant :3
         if board.gives_check(m): #if the move puts the other side in check
             current_move_score += 3 #increase its score by three
-        #add or dont based on move's score
+        #add to pool or dont based on move's score
         if current_move_score > max_move_score: #if m is better than the current movepool
             max_move_score = current_move_score #update max move score
             moves = [] #empty the movepool
@@ -78,16 +78,3 @@ while (not board.is_game_over()): #while not in checkmate/stalemate/etc
     print(move)
     print(board)
     print(board.fen())
-
-    
-    
-
-
-
-        
-
-    
-
-
-
-
