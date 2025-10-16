@@ -6,7 +6,7 @@ class player:
      self.board = board
      self.color = color
     
-    def make_move(self, board: chess.Board, move: chess.Move):
+    def make_move(self, board: chess.Board, move: chess.Move): 
         piece = board.piece_at(move.from_square)
         if piece.color == self.color:
            board.push(move)
@@ -14,8 +14,7 @@ class player:
         else:
             raise Exception("It's not your turn!")  
 
-
-def pick_move(board: chess.Board):
+def old_pick_move(board: chess.Board):
     moves = []
     max_move_score = -99
     for m in board.legal_moves: # for each legal move
@@ -37,8 +36,97 @@ def pick_move(board: chess.Board):
             moves.append(m) #add m to movepool
     return moves[random.randrange(0,len(moves))]
 
+def pick_move(board:chess.Board)->chess.Move:
+    return minimax(0, board)[0]
+
+def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
+    if board.is_game_over(): 
+        if board.is_checkmate():
+            if board.turn: #I THINK that if its checkmate on whites turn that means white lost correct my logic if im wrong
+                return chess.Move.null(), -999999
+            else:
+                return chess.Move.null(), 999999
+        return chess.Move.null(), 0 #if its not a checkmate its a stalemate or something similar which is not particularly good for either side but preferable to losing
+    #maybe change max depth
+    if depth >= 3 and board.turn: #if hit max depth and white to play
+        moves = []
+        max_move_score = -999
+        for m in board.legal_moves: # for each legal move
+        #calculate the resulting board's score
+            board.push(move)
+            current_move_score = boardScore(board)
+            board.pop()
+            if current_move_score > max_move_score: #if m is better than the current movepool
+                max_move_score = current_move_score #update max move score
+                moves = [] #empty the movepool
+            if current_move_score == max_move_score:
+                moves.append(m) #add m to movepool
+        return moves[random.randrange(0,len(moves))], max_move_score
+    elif depth >= 3: #if hit max depth and black to play
+        moves = []
+        min_move_score = 999
+        for m in board.legal_moves: # for each legal move
+        #calculate the resulting board's score
+            board.push(move)
+            current_move_score = boardScore(board)
+            board.pop()
+            if current_move_score < min_move_score: #if m is better than the current movepool
+                min_move_score = current_move_score #update max move score
+                moves = [] #empty the movepool
+            if current_move_score == min_move_score:
+                moves.append(m) #add m to movepool
+        return moves[random.randrange(0,len(moves))], min_move_score
+    if board.turn: #if white to play
+        moves = []
+        max_move_score = -999
+        for m in board.legal_moves: # for each legal move
+        #calculate the resulting board's score
+            board.push(move)
+            current_move_score = minimax(depth + 1,board)[1]
+            board.pop()
+            if current_move_score > max_move_score: #if m is better than the current movepool
+                max_move_score = current_move_score #update max move score
+                moves = [] #empty the movepool
+            if current_move_score == max_move_score:
+                moves.append(m) #add m to movepool
+        return moves[random.randrange(0,len(moves))], max_move_score
+    else: #if black to play 
+        moves = []
+        min_move_score = 999
+        for m in board.legal_moves: # for each legal move
+        #calculate the resulting board's score
+            board.push(move)
+            current_move_score = minimax(depth + 1,board)[1]
+            board.pop()
+            if current_move_score < min_move_score: #if m is better than the current movepool
+                min_move_score = current_move_score #update max move score
+                moves = [] #empty the movepool
+            if current_move_score == min_move_score:
+                moves.append(m) #add m to movepool
+        return moves[random.randrange(0,len(moves))], min_move_score
+    
 
 
+def boardScore(board:chess.Board) -> int: #calculate the score of a board. positive ints mean board is favourable to white, negative mean board is favourable to black
+    if board.is_game_over(): #check if the game is actually over
+        if board.is_checkmate():
+            if board.turn: #I THINK that if its checkmate on whites turn that means white lost correct my logic if im wrong
+                return -999999
+            else:
+                return 999999
+        return 0 #if its not a checkmate its a stalemate or something similar which is not particularly good for either side but preferable to losing
+    if board.is_insufficient_material(): #if neither side can win
+        return 0
+    if board.has_insufficient_material(chess.WHITE):
+        return -9999
+    elif board.has_insufficient_material(chess.BLACK):
+        return 9999
+    score = 0
+    #things to check:
+    #sum up total material on the board (pawn = 1, knight = bishop = 3, rook = 5, queen=9) (white positive black negative)
+        #iterate through each piece an add/subtract
+    #uhhhhhhh. come up with other things to affect score. this is the meat of it idk    
+    return score
 
 #main action starts here
 board = chess.Board()
