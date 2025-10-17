@@ -115,8 +115,6 @@ def boardScore(board:chess.Board) -> int: #calculate the score of a board. posit
             else:
                 return 999999
         return 0 #if its not a checkmate its a stalemate or something similar which is not particularly good for either side but preferable to losing
-    if board.is_insufficient_material(): #if neither side can win
-        return 0
     if board.has_insufficient_material(chess.WHITE):
         return -9999
     elif board.has_insufficient_material(chess.BLACK):
@@ -124,7 +122,27 @@ def boardScore(board:chess.Board) -> int: #calculate the score of a board. posit
     score = 0
     #things to check:
     #sum up total material on the board (pawn = 1, knight = bishop = 3, rook = 5, queen=9) (white positive black negative)
-        #iterate through each piece an add/subtract
+    for square in board.pieces():  #iterate through each piece and add/subtract. board.pieces returns a set of squares with pieces on them
+        piece = board.piece_at(square)
+        if piece.color == chess.WHITE:
+            if piece.piece_type == chess.PAWN:
+                score = score + 1
+            elif piece.piece_type == chess.KNIGHT or piece.piece_type == chess.BISHOP:
+                score = score + 3
+            elif piece.piece_type == chess.ROOK:
+                score = score + 5
+            elif piece.piece_type == chess.QUEEN:
+                score = score + 9
+            #no points for king. both sides will always have one
+        elif piece.color == chess.BLACK:
+            if piece.piece_type == chess.PAWN:
+                score = score - 1
+            elif piece.piece_type == chess.KNIGHT or piece.piece_type == chess.BISHOP:
+                score = score - 3
+            elif piece.piece_type == chess.ROOK:
+                score = score - 5
+            elif piece.piece_type == chess.QUEEN:
+                score = score - 9
     #uhhhhhhh. come up with other things to affect score. this is the meat of it idk    
     return score
 
