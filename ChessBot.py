@@ -53,7 +53,7 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
         max_move_score = -999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
-            board.push(move)
+            board.push(m)
             current_move_score = boardScore(board)
             board.pop()
             if current_move_score > max_move_score: #if m is better than the current movepool
@@ -67,7 +67,7 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
         min_move_score = 999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
-            board.push(move)
+            board.push(m)
             current_move_score = boardScore(board)
             board.pop()
             if current_move_score < min_move_score: #if m is better than the current movepool
@@ -81,7 +81,7 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
         max_move_score = -999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
-            board.push(move)
+            board.push(m)
             current_move_score = minimax(depth + 1,board)[1]
             board.pop()
             if current_move_score > max_move_score: #if m is better than the current movepool
@@ -95,7 +95,7 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
         min_move_score = 999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
-            board.push(move)
+            board.push(m)
             current_move_score = minimax(depth + 1,board)[1]
             board.pop()
             if current_move_score < min_move_score: #if m is better than the current movepool
@@ -122,27 +122,30 @@ def boardScore(board:chess.Board) -> int: #calculate the score of a board. posit
     score = 0
     #things to check:
     #sum up total material on the board (pawn = 1, knight = bishop = 3, rook = 5, queen=9) (white positive black negative)
-    for square in board.pieces():  #iterate through each piece and add/subtract. board.pieces returns a set of squares with pieces on them
-        piece = board.piece_at(square)
-        if piece.color == chess.WHITE:
-            if piece.piece_type == chess.PAWN:
-                score = score + 1
-            elif piece.piece_type == chess.KNIGHT or piece.piece_type == chess.BISHOP:
-                score = score + 3
-            elif piece.piece_type == chess.ROOK:
-                score = score + 5
-            elif piece.piece_type == chess.QUEEN:
-                score = score + 9
-            #no points for king. both sides will always have one
-        elif piece.color == chess.BLACK:
-            if piece.piece_type == chess.PAWN:
-                score = score - 1
-            elif piece.piece_type == chess.KNIGHT or piece.piece_type == chess.BISHOP:
-                score = score - 3
-            elif piece.piece_type == chess.ROOK:
-                score = score - 5
-            elif piece.piece_type == chess.QUEEN:
-                score = score - 9
+    #iterate through each piece and add/subtract.
+    #previous way didnt actually work so i have been forced to do it a different more annoying way
+    for square in board.pieces(chess.PAWN, chess.WHITE):
+        score = score + 1  
+    for square in board.pieces(chess.KNIGHT, chess.WHITE):
+        score = score + 3 
+    for square in board.pieces(chess.BISHOP, chess.WHITE):
+        score = score + 3
+    for square in board.pieces(chess.ROOK, chess.WHITE):
+        score = score + 5
+    for square in board.pieces(chess.QUEEN, chess.WHITE):
+        score = score + 9
+    for square in board.pieces(chess.PAWN, chess.BLACK):
+        score = score - 1  
+    for square in board.pieces(chess.KNIGHT, chess.BLACK):
+        score = score - 3 
+    for square in board.pieces(chess.BISHOP, chess.BLACK):
+        score = score - 3
+    for square in board.pieces(chess.ROOK, chess.BLACK):
+        score = score - 5
+    for square in board.pieces(chess.QUEEN, chess.BLACK):
+        score = score - 9
+    #no points for king. both sides will always have one
+
     #uhhhhhhh. come up with other things to affect score. this is the meat of it idk    
     return score
 
