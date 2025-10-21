@@ -50,7 +50,7 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
     #maybe change max depth
     if depth >= 3 and board.turn: #if hit max depth and white to play
         moves = []
-        max_move_score = -999
+        max_move_score = -999999999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
             board.push(m)
@@ -61,7 +61,9 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == max_move_score:
                 moves.append(m) #add m to movepool
-
+        if (len(moves) == 0):
+            print("uh oh. something's gone wrong")
+            return None, max_move_score
         return moves[random.randrange(0,len(moves))], max_move_score
     elif depth >= 3: #if hit max depth and black to play
         moves = []
@@ -76,7 +78,9 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == min_move_score:
                 moves.append(m) #add m to movepool
-
+        if (len(moves) == 0):
+            print("uh oh. something's gone wrong")
+            return None, min_move_score
         return moves[random.randrange(0,len(moves))], min_move_score
     if board.turn: #if white to play
         moves = []
@@ -91,10 +95,13 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == max_move_score:
                 moves.append(m) #add m to movepool
+        if (len(moves) == 0):
+            print("uh oh. something's gone wrong")
+            return None, max_move_score
         return moves[random.randrange(0,len(moves))], max_move_score
     else: #if black to play 
         moves = []
-        min_move_score = 999
+        min_move_score = 999999999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
             board.push(m)
@@ -105,6 +112,9 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == min_move_score:
                 moves.append(m) #add m to movepool
+        if (len(moves) == 0):
+            print("uh oh. something's gone wrong")
+            return None, min_move_score
         return moves[random.randrange(0,len(moves))], min_move_score
     
 
@@ -168,7 +178,7 @@ except ValueError: #if the
     if (not pos == ""): #(dont show error if they hit enter like the instructions said)
         print("Invalid FEN! Starting from default board.") #show error and continue
 print(board)
-if computer_player.color: #if computer is playing as white, make the first move
+if computer_player.color == board.turn: #if the board's next turn is the computer's color, make the first move
     move = pick_move(board)
     board.push(move)
     print(move)
@@ -189,8 +199,14 @@ while (not board.is_game_over()): #while not in checkmate/stalemate/etc
     
     print(board)
     print(board.fen())
+
+    if (board.is_game_over):
+        break
+
     move = pick_move(board)
     board.push(move)
     print(move)
     print(board)
     print(board.fen())
+
+print("Game over!")
