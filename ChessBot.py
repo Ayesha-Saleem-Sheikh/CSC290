@@ -61,10 +61,11 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == max_move_score:
                 moves.append(m) #add m to movepool
+
         return moves[random.randrange(0,len(moves))], max_move_score
     elif depth >= 3: #if hit max depth and black to play
         moves = []
-        min_move_score = 999
+        min_move_score = 999999999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
             board.push(m)
@@ -75,10 +76,11 @@ def minimax(depth:int,board:chess.Board) -> tuple[chess.Move, int]:
                 moves = [] #empty the movepool
             if current_move_score == min_move_score:
                 moves.append(m) #add m to movepool
+
         return moves[random.randrange(0,len(moves))], min_move_score
     if board.turn: #if white to play
         moves = []
-        max_move_score = -999
+        max_move_score = -999999999
         for m in board.legal_moves: # for each legal move
         #calculate the resulting board's score
             board.push(m)
@@ -151,7 +153,7 @@ def boardScore(board:chess.Board) -> int: #calculate the score of a board. posit
 
 #main action starts here
 board = chess.Board()
-x = input("Computer Player? (w=white/b=black):") #get player and store as variable
+x = input("Minimax Computer Player? (w=white/b=black):") #get player and store as variable
 if x == 'w':#choose a side
     player_color = chess.WHITE
 else:
@@ -174,12 +176,17 @@ if computer_player.color: #if computer is playing as white, make the first move
     print(board.fen())
 #gameplay loop:
 while (not board.is_game_over()): #while not in checkmate/stalemate/etc
-    if human_player.color:
-        move = input("White:")
-    else:
-        move = input("Black:")
-    move = chess.Move.from_uci(move)
-    human_player.make_move(board, move)
+    
+    #if human_player.color:   #uncomment this section and comment next section for human player
+    #    move = input("White:")
+    #else:
+    #    move = input("Black:")
+    # move = chess.Move.from_uci(move)
+    # human_player.make_move(board, move)
+
+    move = old_pick_move(board) #uncomment this section and comment next section for human player
+    board.push(move)
+    
     print(board)
     print(board.fen())
     move = pick_move(board)
